@@ -1,0 +1,101 @@
+# Import libraries
+library(readr)
+library(tidyverse)
+
+# Read the data
+df2 <- read_csv('DataCoSupplyChainDataset.csv')
+
+# Preview the data
+head(df2)
+
+# Find the summary of the data
+df2_summary = summary(df2)
+
+# Display the summary of the data
+df2_summary
+
+# View the structure of the of the data
+plot_str(df2)
+
+# Overview of the data
+df2_overv <- ExpData(df1)
+df2_overv
+
+# Exploratory data analysis
+# Introducing the data
+df2_intro <- introduce(df1)
+df2_intro
+
+# Visualizing df_intro
+plot_intro(df2_intro)
+plot_intro(df2)
+
+# Real world data is usually messy so it would be good
+# to visualize the missing profiles
+plot_missing(df2)
+
+# Bar chart
+plot_histogram(df2$`Days for shipping (real)`)
+plot_bar(df2$`Shipping Mode`)
+plot_bar(df2$`Delivery Status`)
+
+
+# Get selected variables for analysis
+# Slicing columns for the analysis
+df2_col = df2[ , c("Type", "Days for shipping (real)",
+                   "Days for shipment (scheduled)",
+                   "Benefit per order",
+                   "Sales", "Order Region",
+                   "Order Status", "Shipping Mode")]  # Subset by name
+
+# Preview the new data
+View(df2_col)
+
+# Summary of the new data 
+summary(df2_col)
+
+# Descriptive visualization
+ggplot(data = df2_col, mapping = aes(x=`Days for shipping (real)`, y = `Days for shipment (scheduled)`)) + geom_point()
+plot_bar(df2_col$Type, title = 'Payment type')
+plot_bar(df2_col$`Order Region`, title = 'Order Region')
+plot_bar(df2_col$`Order Status`, title = 'Order Status')
+plot_bar(df2_col$`Shipping Mode`, title = 'Shipping mode')
+plot_histogram(df2_col$`Days for shipping (real)`, ggtheme = theme_linedraw(), title = "Days for shipping (real)")
+plot_histogram(df2_col$`Days for shipment (scheduled)`, ggtheme = theme_linedraw(), title = "Days for shipment")
+plot(factor(df2_col$Type), df2_col$`Days for shipping (real)`, xlab="Payment Type", ylab="Days for shipping")
+
+ggplot(df2_col) + geom_boxplot(aes(x=Type, y= Sales))
+ggplot(df2_col) + geom_point(aes(x=Sales, y= `Days for shipping (real)`, color=Type))
+ggplot(df2_col) + geom_point(aes(x=`Type`, y= Sales, color=`Shipping Mode`)) + scale_x_discrete(guide = guide_axis(angle = 90))
+ggplot(df2_col) + geom_line(aes(x=`Shipping Mode`, y= `Days for shipping (real)`, color=`Order Status`)) + scale_x_discrete(guide = guide_axis(angle = 90))
+
+# Delay in the delivery
+delay_days = df2_col$`Days for shipment (scheduled)` - df2_col$`Days for shipping (real)`
+# Visualise the delay results
+plot_histogram(delay_days)
+
+# Grouping the data by region then summarise by sales
+df2_col_grp_region = df2_col %>% group_by(`Order Region`)  %>%
+  summarise(total_sales = sum(Sales),
+            total_benefit = sum(`Benefit per order`),
+            .groups = 'drop')
+
+# Preview the grouped data
+View(df2_col_grp_region)
+
+# Visualize the grouped data
+plot_bar(df2_col_grp_region$`Order Region`, df2_col_grp_region$total_sales)
+ggplot(df2_col_grp_region) + geom_point(aes(x=`Order Region`, y=`total_sales`)) + scale_x_discrete(guide = guide_axis(angle = 90))
+ggplot(df2_col_grp_region) + geom_point(aes(x=`Order Region`, y=total_benefit)) + scale_x_discrete(guide = guide_axis(angle = 90))
+
+# Grouping the data by region and shipping mode then summarise by sales
+df2_col_grp_mod = df2_col %>% group_by(`Shipping Mode`)  %>%
+  summarise(total_sales = sum(Sales),
+            total_benefit = sum(`Benefit per order`),
+            .groups = 'drop')
+# Preview the grouped data by two variables
+View(df2_col_grp_mod)
+
+# Visualizing the grouped data
+ggplot(df2_col_grp_mod) + geom_point(aes(x=`Shipping Mode`, y=`total_sales`)) + scale_x_discrete(guide = guide_axis(angle = 90))
+ggplot(df2_col_grp_mod) + geom_point(aes(x=`Shipping Mode`, y=total_benefit)) + scale_x_discrete(guide = guide_axis(angle = 90))
