@@ -1,0 +1,24 @@
+# Load the required libraries
+library(randomForest)
+library(caret)
+
+# Load the dataset
+data <- read.csv("dataset.csv")
+
+# Split the data into training and testing sets
+set.seed(123)
+trainIndex <- createDataPartition(data$target, p = 0.7, list = FALSE)
+train <- data[trainIndex, ]
+test <- data[-trainIndex, ]
+
+# Train the model
+model <- randomForest(target ~ ., data = train)
+
+# Make predictions on the test set
+predictions <- predict(model, test)
+
+# Evaluate the performance of the model
+confusionMatrix(predictions, test$target)
+
+# Visualize the feature importance
+varImpPlot(model)
