@@ -1,3 +1,24 @@
+# In this code, we first load the required libraries, including the randomForest library 
+# for implementing the Random Forest algorithm and the caret library for data splitting 
+# and performance evaluation.
+
+# We then load the dataset and split it into training and testing sets using the 
+# createDataPartition function. We set the random seed to ensure reproducibility.
+
+# Next, we train the model using the randomForest function, specifying the target variable
+# (target) and using all other variables as predictors (~ .).
+
+# We then use the trained model to make predictions on the test set, and evaluate its 
+# performance using the confusionMatrix function, which computes various metrics such 
+# as accuracy, precision, recall, and F1 score.
+
+# Finally, we visualize the feature importance using the varImpPlot function, which 
+# shows the relative importance of each predictor variable in the model. This can be 
+# useful for feature selection or interpretation of the model.
+
+
+# ----------------------- BEGINNING OF THE CODE ---------------------------- # 
+
 # Load the required libraries
 library(randomForest)
 library(caret)
@@ -22,3 +43,5 @@ confusionMatrix(predictions, test$target)
 
 # Visualize the feature importance
 varImpPlot(model)
+
+# ---------------------------- END OF THE CODE ----------------------------- #
