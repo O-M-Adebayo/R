@@ -1,6 +1,7 @@
 # This R code can be used to perform detailed exploratory data analysis
 # on a dataset.
 
+#__________________________ EDA 1 ______________________________
 
 # Function to load the dataset
 load_dataset <- function(file_path) {
